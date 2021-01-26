@@ -12,7 +12,6 @@ import { getEnvironmentType } from '../../../../../app/scripts/lib/util'
 import Identicon from '../../ui/identicon'
 import AccountListItem from '../account-list-item'
 import { conversionUtil } from '../../../helpers/utils/conversion-util'
-import { formatDate } from '../../../helpers/utils/util'
 import Button from '../../ui/button'
 import OriginRow from '../../ui/origin-row'
 
@@ -74,17 +73,12 @@ export default class SignatureRequestOriginal extends Component {
   }
 
   renderHeader = () => {
-    const { txData } = this.props
-    const formattedTimestamp = formatDate(txData.time, "HH:mm 'on' d MMM y")
     return (
       <div className="request-signature__header">
         <div className="request-signature__header-background" />
 
         <div className="request-signature__header__text">
           {this.context.t('sigRequest')}
-        </div>
-        <div className="request-signature__header__time">
-          {formattedTimestamp}
         </div>
 
         <div className="request-signature__header__tip-container">
@@ -215,8 +209,8 @@ export default class SignatureRequestOriginal extends Component {
       <div className="request-signature__body">
         {this.renderAccountInfo()}
         <OriginRow
-          origin={txData?.msgParams?.origin}
-          domainMetadata={domainMetadata}
+          origin={txData.msgParams.origin}
+          originMetadata={domainMetadata[txData.msgParams.origin]}
         />
         <div
           className={classnames('request-signature__notice', {

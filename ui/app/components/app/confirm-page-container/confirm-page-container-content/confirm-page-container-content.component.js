@@ -19,10 +19,10 @@ export default class ConfirmPageContainerContent extends Component {
     assetImage: PropTypes.string,
     subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     subtitleComponent: PropTypes.node,
-    summaryComponent: PropTypes.node,
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     titleComponent: PropTypes.node,
     warning: PropTypes.string,
+    origin: PropTypes.string.isRequired,
     // Footer
     onCancelAll: PropTypes.func,
     onCancel: PropTypes.func,
@@ -71,12 +71,12 @@ export default class ConfirmPageContainerContent extends Component {
       identiconAddress,
       nonce,
       assetImage,
-      summaryComponent,
       detailsComponent,
       dataComponent,
       warning,
       onCancelAll,
       onCancel,
+      origin,
       cancelText,
       onSubmit,
       submitText,
@@ -88,23 +88,22 @@ export default class ConfirmPageContainerContent extends Component {
     return (
       <div className="confirm-page-container-content">
         {warning && <ConfirmPageContainerWarning warning={warning} />}
-        {summaryComponent || (
-          <ConfirmPageContainerSummary
-            className={classnames({
-              'confirm-page-container-summary--border':
-                !detailsComponent || !dataComponent,
-            })}
-            action={action}
-            title={title}
-            titleComponent={titleComponent}
-            subtitle={subtitle}
-            subtitleComponent={subtitleComponent}
-            hideSubtitle={hideSubtitle}
-            identiconAddress={identiconAddress}
-            nonce={nonce}
-            assetImage={assetImage}
-          />
-        )}
+        <ConfirmPageContainerSummary
+          className={classnames({
+            'confirm-page-container-summary--border':
+              !detailsComponent || !dataComponent,
+          })}
+          action={action}
+          title={title}
+          titleComponent={titleComponent}
+          subtitle={subtitle}
+          subtitleComponent={subtitleComponent}
+          hideSubtitle={hideSubtitle}
+          identiconAddress={identiconAddress}
+          nonce={nonce}
+          origin={origin}
+          assetImage={assetImage}
+        />
         {this.renderContent()}
         {(errorKey || errorMessage) && (
           <div className="confirm-page-container-content__error-container">

@@ -3,16 +3,15 @@ import PropTypes from 'prop-types'
 import SiteIcon from '../site-icon'
 
 const OriginRow = (props) => {
-  const { origin, domainMetadata } = props
-  const txOriginMetadata = domainMetadata[origin]
+  const { origin, originMetadata } = props
   return (
     <div className="origin-row">
       <div className="origin-row__text">Origin:</div>
-      {txOriginMetadata ? (
+      {originMetadata?.icon ? (
         <div className="origin-row-item">
           <SiteIcon
-            icon={txOriginMetadata.icon}
-            name={txOriginMetadata.name}
+            icon={originMetadata.icon}
+            name={originMetadata.name}
             size={24}
           />
           <div className="origin-row-item__text">{origin}</div>
@@ -25,8 +24,8 @@ const OriginRow = (props) => {
 }
 
 OriginRow.propTypes = {
-  origin: PropTypes.string,
-  domainMetadata: PropTypes.object,
+  origin: PropTypes.string.isRequired,
+  originMetadata: PropTypes.object,
 }
 
 export default OriginRow

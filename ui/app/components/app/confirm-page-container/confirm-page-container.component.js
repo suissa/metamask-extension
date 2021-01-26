@@ -25,8 +25,6 @@ export default class ConfirmPageContainer extends Component {
     titleComponent: PropTypes.node,
     hideSenderToRecipient: PropTypes.bool,
     showAccountInHeader: PropTypes.bool,
-    txData: PropTypes.object,
-    domainMetadata: PropTypes.object,
     // Sender to Recipient
     fromAddress: PropTypes.string,
     fromName: PropTypes.string,
@@ -43,9 +41,9 @@ export default class ConfirmPageContainer extends Component {
     identiconAddress: PropTypes.string,
     nonce: PropTypes.string,
     assetImage: PropTypes.string,
-    summaryComponent: PropTypes.node,
     warning: PropTypes.string,
     unapprovedTxCount: PropTypes.number,
+    origin: PropTypes.string.isRequired,
     // Navigation
     totalTx: PropTypes.number,
     positionOfCurrentTx: PropTypes.number,
@@ -84,7 +82,6 @@ export default class ConfirmPageContainer extends Component {
       subtitle,
       subtitleComponent,
       hideSubtitle,
-      summaryComponent,
       detailsComponent,
       dataComponent,
       onCancelAll,
@@ -107,12 +104,10 @@ export default class ConfirmPageContainer extends Component {
       requestsWaitingText,
       hideSenderToRecipient,
       showAccountInHeader,
-      txData,
-      domainMetadata,
+      origin,
     } = this.props
     const renderAssetImage =
       contentComponent || (!contentComponent && !identiconAddress)
-    const showOrigin = txData?.origin && txData.origin !== 'metamask'
 
     return (
       <div className="page-container">
@@ -133,9 +128,6 @@ export default class ConfirmPageContainer extends Component {
           onEdit={() => onEdit()}
           showAccountInHeader={showAccountInHeader}
           accountAddress={fromAddress}
-          showOrigin={showOrigin}
-          txData={txData}
-          domainMetadata={domainMetadata}
         >
           {hideSenderToRecipient ? null : (
             <SenderToRecipient
@@ -157,7 +149,6 @@ export default class ConfirmPageContainer extends Component {
             subtitle={subtitle}
             subtitleComponent={subtitleComponent}
             hideSubtitle={hideSubtitle}
-            summaryComponent={summaryComponent}
             detailsComponent={detailsComponent}
             dataComponent={dataComponent}
             errorMessage={errorMessage}
@@ -174,6 +165,7 @@ export default class ConfirmPageContainer extends Component {
             disabled={disabled}
             unapprovedTxCount={unapprovedTxCount}
             rejectNText={this.context.t('rejectTxsN', [unapprovedTxCount])}
+            origin={origin}
           />
         )}
         {contentComponent && (
