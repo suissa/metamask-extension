@@ -70,6 +70,7 @@ async function start() {
     `bundle viz: ${bundleLinks}`,
     `build viz: ${depVizLink}`,
     `code coverage: ${coverageLink}`,
+    `build viz: ${depVizLink}`,
     `<a href="${allArtifactsUrl}">all artifacts</a>`,
   ]
   const hiddenContent = `<ul>${contentRows

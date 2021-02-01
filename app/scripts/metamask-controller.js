@@ -1,6 +1,8 @@
 import EventEmitter from 'events'
 import pump from 'pump'
 import Dnode from 'dnode'
+import { ObservableStore } from '@metamask/obs-store'
+import { storeAsStream } from '@metamask/obs-store/dist/asStream'
 import { JsonRpcEngine } from 'json-rpc-engine'
 import { debounce } from 'lodash'
 import createEngineStream from 'json-rpc-middleware-stream/engineStream'
@@ -105,6 +107,7 @@ export default class MetamaskController extends EventEmitter {
 
     this.approvalController = new ApprovalController({
       showApprovalRequest: opts.showUserConfirmation,
+      defaultApprovalType: 'NO_TYPE',
     })
 
     this.networkController = new NetworkController(initState.NetworkController)
@@ -412,6 +415,9 @@ export default class MetamaskController extends EventEmitter {
     ) {
       this.submitPassword(password)
     }
+
+    // TODO:LegacyProvider: Delete
+    this.publicConfigStore = this.createPublicConfigStore()
   }
 
   /**
@@ -456,6 +462,38 @@ export default class MetamaskController extends EventEmitter {
       providerOpts,
     )
     return providerProxy
+  }
+
+  /**
+   * TODO:LegacyProvider: Delete
+   * Constructor helper: initialize a public config store.
+   * This store is used to make some config info available to Dapps synchronously.
+   */
+  createPublicConfigStore() {
+    // subset of state for metamask inpage provider
+    const publicConfigStore = new ObservableStore()
+    const { networkController } = this
+
+    // setup memStore subscription hooks
+    this.on('update', updatePublicConfigStore)
+    updatePublicConfigStore(this.getState())
+
+    function updatePublicConfigStore(memState) {
+      const chainId = networkController.getCurrentChainId()
+      if (memState.network !== 'loading') {
+        publicConfigStore.putState(selectPublicState(chainId, memState))
+      }
+    }
+
+    function selectPublicState(chainId, { isUnlocked, network }) {
+      return {
+        isUnlocked,
+        chainId,
+        networkVersion: network,
+      }
+    }
+
+    return publicConfigStore
   }
 
   /**
@@ -576,6 +614,10 @@ export default class MetamaskController extends EventEmitter {
       // network management
       setProviderType: nodeify(
         networkController.setProviderType,
+        networkController,
+      ),
+      rollbackToPreviousProvider: nodeify(
+        networkController.rollbackToPreviousProvider,
         networkController,
       ),
       setCustomRpc: nodeify(this.setCustomRpc, this),
@@ -1826,6 +1868,10 @@ export default class MetamaskController extends EventEmitter {
 
     // messages between inpage and background
     this.setupProviderConnection(mux.createStream('metamask-provider'), sender)
+
+    // TODO:LegacyProvider: Delete
+    // legacy streams
+    this.setupPublicConfig(mux.createStream('publicConfig'))
   }
 
   /**
@@ -2009,6 +2055,28 @@ export default class MetamaskController extends EventEmitter {
     // forward to metamask primary provider
     engine.push(providerAsMiddleware(provider))
     return engine
+  }
+
+  /**
+   * TODO:LegacyProvider: Delete
+   * A method for providing our public config info over a stream.
+   * This includes info we like to be synchronous if possible, like
+   * the current selected account, and network ID.
+   *
+   * Since synchronous methods have been deprecated in web3,
+   * this is a good candidate for deprecation.
+   *
+   * @param {*} outStream - The stream to provide public config over.
+   */
+  setupPublicConfig(outStream) {
+    const configStream = storeAsStream(this.publicConfigStore)
+
+    pump(configStream, outStream, (err) => {
+      configStream.destroy()
+      if (err) {
+        log.error(err)
+      }
+    })
   }
 
   /**
@@ -2334,13 +2402,6 @@ export default class MetamaskController extends EventEmitter {
     nickname,
     rpcPrefs,
   ) {
-    await this.preferencesController.updateRpc({
-      rpcUrl,
-      chainId,
-      ticker,
-      nickname,
-      rpcPrefs,
-    })
     this.networkController.setRpcTarget(
       rpcUrl,
       chainId,
@@ -2348,6 +2409,13 @@ export default class MetamaskController extends EventEmitter {
       nickname,
       rpcPrefs,
     )
+    await this.preferencesController.updateRpc({
+      rpcUrl,
+      chainId,
+      ticker,
+      nickname,
+      rpcPrefs,
+    })
     return rpcUrl
   }
 
