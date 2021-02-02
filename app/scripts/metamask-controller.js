@@ -2080,15 +2080,37 @@ export default class MetamaskController extends EventEmitter {
         requestUserApproval: this.approvalController.addAndShowApprovalRequest.bind(
           this.approvalController,
         ),
-        addCustomRpc: ({
+        updateRpcTarget: ({ chainId: _chainId } = {}) => {
+          const {
+            rpcUrl,
+            chainId,
+            ticker,
+            nickname,
+            rpcPrefs,
+          } = this.findCustomRpcBy({ chainId: _chainId })
+          this.networkController.setRpcTarget(
+            rpcUrl,
+            chainId,
+            ticker,
+            nickname,
+            rpcPrefs,
+          )
+        },
+        addCustomRpc: async ({
           chainId,
           blockExplorerUrl,
           ticker,
           chainName,
           rpcUrl,
         } = {}) => {
-          this.updateAndSetCustomRpc(rpcUrl, chainId, ticker, chainName, {
-            blockExplorerUrl,
+          await this.preferencesController.updateRpc({
+            rpcUrl,
+            chainId,
+            ticker,
+            chainName,
+            rpcPrefs: {
+              blockExplorerUrl,
+            },
           })
         },
       }),
@@ -2524,6 +2546,25 @@ export default class MetamaskController extends EventEmitter {
    */
   async delCustomRpc(rpcUrl) {
     await this.preferencesController.removeFromFrequentRpcList(rpcUrl)
+  }
+
+  /**
+   * Returns the first RPC info object that matches at least one field of the
+   * provided search criteria. Returns null if no match is found
+   *
+   * @param {Object} rpcInfo - The RPC endpoint properties and values to check.
+   * @returns {Object} rpcInfo found in the frequentRpcList
+   */
+  findCustomRpcBy(rpcInfo) {
+    const frequentRpcListDetail = this.preferencesController.getFrequentRpcListDetail()
+    for (const existingRpcInfo of frequentRpcListDetail) {
+      for (const key of Object.keys(rpcInfo)) {
+        if (existingRpcInfo[key] === rpcInfo[key]) {
+          return existingRpcInfo
+        }
+      }
+    }
+    return null
   }
 
   /**
