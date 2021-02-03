@@ -20,7 +20,7 @@ async function addEthereumChainHandler(
   res,
   _next,
   end,
-  { addCustomRpc, customRpcExistsWith, updateRpcTarget, requestUserApproval },
+  { addCustomRpc, findCustomRpcBy, updateRpcTarget, requestUserApproval },
 ) {
   if (!req.params?.[0] || typeof req.params[0] !== 'object') {
     return end(
@@ -112,14 +112,19 @@ async function addEthereumChainHandler(
     )
   }
 
-  if (customRpcExistsWith({ chainId: _chainId })) {
+  const existingNetwork = findCustomRpcBy({ chainId: _chainId })
+
+  if (existingNetwork !== null) {
     try {
       await updateRpcTarget(
         await requestUserApproval({
           origin,
           type: MESSAGE_TYPE.SWITCH_ETHEREUM_CHAIN,
           requestData: {
-            chainId: _chainId,
+            rpcUrl: existingNetwork.rpcUrl,
+            chainId: existingNetwork.chainId,
+            nickname: existingNetwork.nickname,
+            ticker: existingNetwork.ticker,
           },
         }),
       )
@@ -210,6 +215,20 @@ async function addEthereumChainHandler(
         },
       }),
     )
+
+    await updateRpcTarget(
+      await requestUserApproval({
+        origin,
+        type: MESSAGE_TYPE.SWITCH_ETHEREUM_CHAIN,
+        requestData: {
+          rpcUrl: firstValidRPCUrl,
+          chainId: _chainId,
+          nickname: _chainName,
+          ticker,
+        },
+      }),
+    )
+
     res.result = null
   } catch (error) {
     return end(error)
