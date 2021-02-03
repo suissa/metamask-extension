@@ -52,6 +52,23 @@
   "addAlias": {
     "message": "Add alias"
   },
+  "addEthereumChainConfirmationDescription": {
+    "message": "This will allow this network to be used within MetaMask."
+  },
+  "addEthereumChainConfirmationRisks": {
+    "message": "MetaMask does not verify custom networks."
+  },
+  "addEthereumChainConfirmationRisksLearnMore": {
+    "message": "Learn about $1.",
+    "description": "$1 is a link with text that is provided by the 'addEthereumChainConfirmationRisksLearnMoreLink' key"
+  },
+  "addEthereumChainConfirmationRisksLearnMoreLink": {
+    "message": "scams and network security risks",
+    "description": "Link text for the 'addEthereumChainConfirmationRisksLearnMore' translation key"
+  },
+  "addEthereumChainConfirmationTitle": {
+    "message": "Allow this site to add a network?"
+  },
   "addNetwork": {
     "message": "Add Network"
   },
@@ -148,7 +165,7 @@
     "message": "Approval Tx Gas Cost"
   },
   "approve": {
-    "message": "Approve spend limit"
+    "message": "Approve"
   },
   "approveSpendLimit": {
     "message": "Approve $1 spend limit",
@@ -212,7 +229,7 @@
     "message": "Basic"
   },
   "blockExplorerUrl": {
-    "message": "Block Explorer"
+    "message": "Block Explorer URL"
   },
   "blockExplorerView": {
     "message": "View account at $1",
@@ -405,6 +422,9 @@
   },
   "currencyConversion": {
     "message": "Currency Conversion"
+  },
+  "currencySymbol": {
+    "message": "Currency Symbol"
   },
   "currentAccountNotConnected": {
     "message": "Your current account is not connected"
@@ -1002,6 +1022,14 @@
   "metametricsOptInDescription": {
     "message": "MetaMask would like to gather usage data to better understand how our users interact with the extension. This data will be used to continually improve the usability and user experience of our product and the Ethereum ecosystem."
   },
+  "mismatchedChain": {
+    "message": "This network details for this Chain ID do not match our records. We recommend that you $1 before proceeding.",
+    "description": "$1 is a clickable link with text defined by the 'mismatchedChainLinkText' key"
+  },
+  "mismatchedChainLinkText": {
+    "message": "verify the network details",
+    "description": "Serves as link text for the 'mismatchedChain' key. This text will be embedded inside the translation for that key."
+  },
   "mobileSyncText": {
     "message": "Please enter your password to confirm it's you!"
   },
@@ -1027,6 +1055,9 @@
   "negativeETH": {
     "message": "Can not send negative amounts of ETH."
   },
+  "networkDetails": {
+    "message": "Network Details"
+  },
   "networkName": {
     "message": "Network Name"
   },
@@ -1035,6 +1066,9 @@
   },
   "networkSettingsDescription": {
     "message": "Add and edit custom RPC networks"
+  },
+  "networkURL": {
+    "message": "Network URL"
   },
   "networks": {
     "message": "Networks"
@@ -1137,6 +1171,9 @@
   "onboardingReturnNotice": {
     "message": "\"$1\" will close this tab and direct back to $2",
     "description": "Return the user to the site that initiated onboarding"
+  },
+  "onlyAddNetworksYouTrust": {
+    "message": "Only add networks you trust."
   },
   "onlyAddTrustedNetworks": {
     "message": "A malicious Ethereum network provider can lie about the state of the blockchain and record your network activity. Only add custom networks you trust."
@@ -2057,6 +2094,17 @@
   },
   "unlockMessage": {
     "message": "The decentralized web awaits"
+  },
+  "unrecognizedChain": {
+    "message": "This custom network is not recognized. We recommend that you $1 before proceeding",
+    "description": "$1 is a clickable link with text defined by the 'unrecognizedChanLinkText' key. The link will open to instructions for users to validate custom network details."
+  },
+  "unrecognizedChainLinkText": {
+    "message": "verify the network details",
+    "description": "Serves as link text for the 'unrecognizedChain' key. This text will be embedded inside the translation for that key."
+  },
+  "untrustworthyNetworksCanBeRisky": {
+    "message": "Adding untrustworthy networks can lead to scam and phishing risks"
   },
   "updatedWithDate": {
     "message": "Updated $1"
