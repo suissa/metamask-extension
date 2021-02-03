@@ -22,4 +22,5 @@ export const safeComponentList = {
   Button,
   Popover,
   Box,
+  NetworkDisplay,
 }
