@@ -1643,13 +1643,36 @@ export default class MetamaskController extends EventEmitter {
    * Passed back to the requesting Dapp.
    */
   async newRequestEncryptionPublicKey(msgParams, req) {
-    const promise = this.encryptionPublicKeyManager.addUnapprovedMessageAsync(
-      msgParams,
-      req,
-    )
-    this.sendUpdate()
-    this.opts.showUserConfirmation()
-    return promise
+    const address = msgParams
+    const keyring = await this.keyringController.getKeyringForAccount(address)
+
+    switch (keyring.type) {
+      case 'Ledger Hardware': {
+        return new Promise((_, reject) => {
+          reject(
+            new Error('Ledger does not support eth_getEncryptionPublicKey.'),
+          )
+        })
+      }
+
+      case 'Trezor Hardware': {
+        return new Promise((_, reject) => {
+          reject(
+            new Error('Trezor does not support eth_getEncryptionPublicKey.'),
+          )
+        })
+      }
+
+      default: {
+        const promise = this.encryptionPublicKeyManager.addUnapprovedMessageAsync(
+          msgParams,
+          req,
+        )
+        this.sendUpdate()
+        this.opts.showUserConfirmation()
+        return promise
+      }
+    }
   }
 
   /**
@@ -1912,7 +1935,9 @@ export default class MetamaskController extends EventEmitter {
    */
   setupControllerConnection(outStream) {
     const api = this.getApi()
-    const dnode = Dnode(api)
+    // the "weak: false" option is for nodejs only (eg unit tests)
+    // it is a workaround for node v12 support
+    const dnode = Dnode(api, { weak: false })
     // report new active controller connection
     this.activeControllerConnections += 1
     this.emit('controllerConnectionChanged', this.activeControllerConnections)
